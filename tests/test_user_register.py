@@ -9,13 +9,13 @@ class TestUserRegister:
 
     @allure.title('Проверяем, что чтобы создать пользователя, нужно передать в ручку все обязательные поля')
     @allure.description('Регистрируем пользователя с заполненными email, паролем и именем, '
-                        'проверяем, что в ответ приходит код 200 и тело ответа содержит {"success": true}')
+                        'проверяем, что в ответ приходит код 200 и тело ответа содержит accessToken')
     @allure.link(URLs.USER_REGISTER)
     def test_all_required_creds(self):
         user = valid_creds()
         response = post_request_register(user)
 
-        assert response.status_code == 200 and '"success":true' in response.text
+        assert response.status_code == 200 and 'accessToken' in response.text
 
     @allure.title('Проверяем, что нельзя создать двух пользователей с одинаковыми email')
     @allure.description('Пытаемся зарегистрировать пользователя под уже существующим email, '
@@ -23,7 +23,7 @@ class TestUserRegister:
     @allure.link(URLs.USER_REGISTER)
     def test_register_two_same_users_not_allowed(self, registered_user):
 
-        user = registered_user.copy()
+        user = registered_user.copy()['creds']
         user['password'] = random_string()
 
         response = post_request_register(user)

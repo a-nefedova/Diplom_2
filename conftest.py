@@ -2,7 +2,7 @@ import allure
 import pytest
 import requests
 
-from helper import valid_creds, post_request_register, post_request_auth
+from helper import valid_creds, post_request_register
 from data import URLs
 
 
@@ -14,10 +14,8 @@ def registered_user():
     creds = valid_creds()
     response = post_request_register(creds)
     user_creds['creds'] = creds
-    user_creds['token'] = response.json()["accessToken"]
+    user_creds['headers'] = {'Authorization': response.json()["accessToken"]}
 
     yield user_creds
 
-    response_del = requests.delete(f'{URLs.USER_PATCH_OR_DELETE}', headers=creds['token'], data=creds)
-# TODO убрать ассерт и название ответа
-    assert response_del.status_code == 202
+    requests.delete(f'{URLs.USER_PATCH_OR_DELETE}', headers=user_creds['headers'], data=user_creds['creds'])

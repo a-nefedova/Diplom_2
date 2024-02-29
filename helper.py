@@ -17,7 +17,7 @@ def valid_creds():
     creds = {
         'email': f'{random_string()}@yandex.ru',
         'password': random_string(),
-        'name': 'random_string()'
+        'name': random_string()
     }
     return creds
 

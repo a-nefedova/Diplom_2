@@ -2,20 +2,20 @@ import pytest
 import allure
 
 from data import URLs
-from helper import valid_creds, random_string, post_request_auth
+from helper import random_string, post_request_auth
 
 
 class TestUserAuthorization:
 
     @allure.title('Проверяем, что для авторизации нужно передать все обязательные поля')
     @allure.description('Авторизуемся с существующими email и паролем, '
-                        'проверяем, что в ответ приходит код 200 и тело ответа содержит {"success": true}')
+                        'проверяем, что в ответ приходит код 200 и тело ответа содержит accessToken')
     @allure.link(URLs.USER_AUTH)
     def test_auth_all_required_creds(self, registered_user):
 
-        response = post_request_auth(registered_user)
+        response = post_request_auth(registered_user['creds'])
 
-        assert response.status_code == 200 and '"success":true' in response.text
+        assert response.status_code == 200 and 'accessToken' in response.text
 
     @allure.title('Проверяем, что система вернёт ошибку, если неправильно указать email или пароль')
     @allure.description('Используем параметризацию, где в тестовых данных либо email, либо пароль некорректный. '
@@ -24,7 +24,7 @@ class TestUserAuthorization:
     @pytest.mark.parametrize('cred', ['email', 'password'])
     def test_auth_incorrect_creds(self, registered_user, cred):
 
-        user = registered_user.copy()
+        user = registered_user['creds']
         user[cred] = random_string()
 
         response = post_request_auth(user)
