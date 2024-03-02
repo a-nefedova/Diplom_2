@@ -12,7 +12,6 @@ def random_string(length=10):
     return random_str
 
 
-@allure.step('Генерируем словарь с уникальными учётными данными')
 def valid_creds():
     creds = {
         'email': f'{random_string()}@yandex.ru',
@@ -22,23 +21,31 @@ def valid_creds():
     return creds
 
 
-@allure.step(f'Отправляем данные на регистрацию пользователя')
+@allure.step(f'Регистрируем нового пользователя')
 def post_request_register(creds):
-    response = requests.post(URLs.USER_REGISTER, data=creds)
-    return response
+    return requests.post(URLs.USER_REGISTER, data=creds)
 
 
-@allure.step(f'Отправляем данные на авторизацию')
+@allure.step(f'Авторизуемся')
 def post_request_auth(creds):
-    response = requests.post(URLs.USER_AUTH, data=creds)
-    return response
+    return requests.post(URLs.USER_AUTH, data=creds)
 
 
-@allure.step(f'Отправляем данные на заказ')
-def post_request_order(creds):
-    return requests.post(URLs.ORDER, data=creds)
+@allure.step(f'Изменяем данные пользователя')
+def patch_request_user(creds, headers=None):
+    return requests.patch(URLs.USER_PATCH_OR_DELETE, headers=headers, data=creds)
 
 
-@allure.step('Отправляем запрос на получение списка заказов')
-def get_request_orders():
-    return requests.get(URLs.ORDER)
+@allure.step(f'Удаляем пользователя')
+def delete_request_user(headers):
+    return requests.delete(URLs.USER_PATCH_OR_DELETE, headers=headers)
+
+
+@allure.step(f'Создаём заказ')
+def post_request_order(headers=None, ingredients=None):
+    return requests.post(URLs.ORDERS, headers=headers, data=ingredients)
+
+
+@allure.step(f'Запрашиваем список заказов')
+def get_request_orders(headers=None):
+    return requests.get(URLs.ORDERS, headers=headers)
