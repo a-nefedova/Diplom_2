@@ -2,7 +2,7 @@ import pytest
 import allure
 
 from data import URLs
-from helper import random_string, post_request_auth
+from helper import valid_creds, post_request_auth
 
 
 class TestUserAuthorization:
@@ -25,10 +25,7 @@ class TestUserAuthorization:
     def test_auth_incorrect_creds(self, registered_user, cred):
 
         user = registered_user['creds']
-        if cred == 'email':
-            user[cred] = f'{random_string()}@yandex.ru'
-        else:
-            user[cred] = random_string()
+        user[cred] = valid_creds()[cred]
 
         auth = post_request_auth(user)
         status_code = auth.status_code

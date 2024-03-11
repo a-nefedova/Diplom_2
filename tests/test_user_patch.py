@@ -1,7 +1,7 @@
 import allure
 import pytest
 
-from helper import random_string, patch_request_user
+from helper import valid_creds, patch_request_user
 from data import URLs
 
 
@@ -14,10 +14,7 @@ class TestUserPatch:
     @pytest.mark.parametrize('cred', ['email', 'password', 'name'])
     def test_user_patch_authorized(self, cred, registered_user):
 
-        if cred == 'email':
-            registered_user['creds'][cred] = f'{random_string()}@yandex.ru'
-        else:
-            registered_user['creds'][cred] = random_string()
+        registered_user['creds'][cred] = valid_creds()[cred]
         user_headers = registered_user['headers']
         user_creds = registered_user['creds']
         email_and_name = user_creds.copy()
@@ -34,10 +31,7 @@ class TestUserPatch:
     @pytest.mark.parametrize('cred', ['email', 'password', 'name'])
     def test_user_patch_unauthorized(self, cred, registered_user):
 
-        if cred == 'email':
-            registered_user['creds'][cred] = f'{random_string()}@yandex.ru'
-        else:
-            registered_user['creds'][cred] = random_string()
+        registered_user['creds'][cred] = valid_creds()[cred]
         user_creds = registered_user['creds']
 
         patch = patch_request_user(user_creds)
